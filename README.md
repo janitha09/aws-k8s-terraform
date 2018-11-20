@@ -76,5 +76,4 @@ member e0729dabcb149ee is healthy: got healthy result from http://1.1.1.1:2379
 member 63128dce64240d6f is healthy: got healthy result from http://2.2.2.2:2379
 member fc4e46dfa36f76cc is healthy: got healthy result from http://3.3.3.3:2379
 cluster is healthy
-
 ```
