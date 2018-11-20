@@ -44,3 +44,17 @@ variable "aws" {
 
 Place your private key and public key into "module/masters/" as "id_rsa" and "id_rsa.pub" repectively.
 
+## Terraform
+
+### AWS Cluster Setup
+Simple type below
+
+```
+terraform init
+terraform apply
+```
+
+### Destroy
+```
+terraform destroy
+```
