@@ -11,7 +11,7 @@ variable "aws_instance" {
 
 variable "security_groups" {
   type    = "list"
-  default = ["launch-wizard-1"]
+  default = ["cluster"]
 }
 
 
