@@ -1,0 +1,16 @@
+[Unit]
+Description=Etcd Server
+After=network.target
+ 
+[Service]
+Type=notify
+WorkingDirectory=/var/lib/etcd/
+EnvironmentFile=-/etc/etcd/etcd.conf
+# root계정으로 사용. 혹은 etcd 계정 추가하고 etcd로 변경. (귀찮아짐)
+User=root
+ExecStart=/usr/local/bin/etcd
+Restart=always
+LimitNOFILE=65536
+ 
+[Install]
+WantedBy=multi-user.target

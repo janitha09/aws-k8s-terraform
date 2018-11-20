@@ -1,0 +1,7 @@
+# terraform
+*.tfstate*
+.terraform
+
+# credentials
+certs/
+credential.tf
