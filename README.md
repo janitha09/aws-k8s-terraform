@@ -1,4 +1,4 @@
-# Terraform for FO4 AWS service
+# Terraform for AWS service
 
 Terraform code for K8S cluster on AWS
 
