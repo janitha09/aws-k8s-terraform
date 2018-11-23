@@ -1,3 +1,8 @@
+variable "aws" {
+  type    = "map"
+}
+
+
 variable "aws_instance" {
   type    = "map"
   default = {
@@ -11,19 +16,19 @@ variable "aws_instance" {
 
 variable "security_groups" {
   type    = "list"
-  default = ["cluster"]
+  default = ["aws-terraform-inbound", "aws-terraform-outbound"]
 }
 
 
 variable "key" {
   type = "map"
-  default = {
-    name        = "fo4-team-terraform"
-    private_key = "certs/id_rsa"
-    public_key  = "certs/id_rsa.pub"
-  }
 }
 
-#variable "eip" {
-#  default = "0.0.0.0"
-#}
+variable "public_key" {}
+
+variable "eip" {}
+
+
+variable "kubernetes" {
+  type = "map"
+}
