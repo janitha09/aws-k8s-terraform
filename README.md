@@ -28,7 +28,7 @@ sudo mv terraform /usr/local/bin
 AWS Keys: [AWS Security Credential](https://console.aws.amazon.com/iam/home?#/security_credential)
 AWS Region: [AWS Region](https://docs.aws.amazon.com/general/latest/gr/rande.html)
 
-Fill below and name it as "module/masters/credential.tf"
+Fill below in "variables.tf"
 ```
 variable "aws" {
   type    = "map"
@@ -40,9 +40,11 @@ variable "aws" {
 }
 ```
 
+Adjust k8s posSubnet, serviceSubnet and dns locadbalancer address for K8S API masters
+
 ### AWS Key Pair
 
-Place your private key and public key into "module/masters/" as "id_rsa" and "id_rsa.pub" repectively.
+Place your private key and public key into "certs/" as "id_rsa" and "id_rsa.pub" repectively.
 
 ## Terraform
 

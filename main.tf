@@ -1,55 +1,77 @@
+############################
+########## MASTER ##########
+############################
+
 module "masters" {
   source = "./modules/masters"
-#
-#  aws = {
-#    access_key    = ""
-#    secret_key    = ""
-#    region        = "ap-northeast-2"
-#  }
-#
-#  aws_instance = {
-#   tag_name      = "cluster2"
-#    ami           = "ami-06e7b9c5e0c4dd014"
-#    instance_type = "t2.micro"
-#  }
-#
-#
-#  security_groups = ["launch-wizard-1"]
-#
-#  key = {
-#    name          = "nilath"
-#    private_key   = "/root/.ssh/id_rsa"
-#    public_key    = "/root/.ssh/id_rsa.pub"
-#  }
 
+  aws = "${var.aws}"
+  key = "${var.key}"
+  public_key = "${data.template_file.public_key.rendered}"
+  kubernetes = "${var.kubernetes}"
+
+  # move eip to post processing
+  eip = "${var.eip}"
 }
 
-output "public_ip" {
-  value = "${module.masters.public_ip}"
+locals {
+  count = "${module.masters.count}"
+  id = "${module.masters.id}"
+  public_ip = "${module.masters.public_ip}"
+  private_ip = "${module.masters.private_ip}"
+  tags_name = "${module.masters.tags_name}"
 }
 
-
-
-variable "server_hostname" {
-  default = "node01"
+output "aws" {
+  value = {
+    count = "${local.count}"
+    id = "${local.id}"
+    public_ip = "${local.public_ip}"
+    private_ip = "${local.private_ip}"
+    tags_name = "${local.tags_name}"
+  }
 }
 
-# Ubuntu reference for hostnamectl: http://manpages.ubuntu.com/manpages/trusty/man1/hostnamectl.1.html
-resource "null_resource" "set-hostname" {
+resource "null_resource" "master" {
+  depends_on = ["module.masters"]
+
+  count = "${local.count}"
   connection {
-    type = "ssh"
-    user = "ubuntu"
-    private_key = "${file("modules/masters/certs/id_rsa")}"
-    host = "${module.masters.public_ip}"
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = "${data.template_file.private_key.rendered}"
+    host        = "${local.public_ip}"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "echo ${module.masters.public_ip} > test.txt",
-    ]
+  provisioner "local-exec" {
+    command = "echo '${element(local.public_ip, count.index)}' >> test"
   }
 }
 
+module "etcd" {
+  source ="./modules/etcd"
+
+  count      = "${local.count}"
+  id         = "${local.id}"
+  public_ip  = "${local.public_ip}"
+  private_ip = "${local.private_ip}"
+  key = "${var.key}"
+  public_key = "${data.template_file.public_key.rendered}"
+  private_key = "${data.template_file.private_key.rendered}"
+}
+
+module "kubernetes" {
+  source ="./modules/kubernetes"
+
+  count      = "${local.count}"
+  id         = "${local.id}"
+  public_ip  = "${local.public_ip}"
+  private_ip = "${local.private_ip}"
+  key = "${var.key}"
+  public_key = "${data.template_file.public_key.rendered}"
+  private_key = "${data.template_file.private_key.rendered}"
+  kubernetes = "${var.kubernetes}"
+}
   
 /*
 variable "long_key" {

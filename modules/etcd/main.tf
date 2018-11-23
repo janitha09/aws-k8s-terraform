@@ -3,16 +3,16 @@
 ############################
 
 resource "null_resource" "etcd" {
-  triggers {
-    cluster_instance_ids = "${join(",", aws_instance.cluster.*.id)}"
-  }
+#  triggers {
+#    cluster_instance_ids = "${join(",", aws_instance.cluster.*.id)}"
+#  }
 
-  count = "${var.aws_instance["count"]}"
+  count = "${var.count}"
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file("${path.module}/${var.key["private_key"]}")}"
-    host        = "${element(aws_instance.cluster.*.public_ip, count.index)}"
+    private_key = "${var.private_key}"
+    host        = "${element(var.public_ip, count.index)}"
   }
 
   provisioner "file" {
@@ -39,12 +39,12 @@ resource "null_resource" "etcd" {
 resource "null_resource" "etcd_execute" {
   depends_on = ["null_resource.etcd"]
 
-  count = "${var.aws_instance["count"]}"
+  count = "${var.count}"
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file("${path.module}/${var.key["private_key"]}")}"
-    host        = "${element(aws_instance.cluster.*.public_ip, count.index)}"
+    private_key = "${var.private_key}"
+    host        = "${element(var.public_ip, count.index)}"
   }
 
   provisioner "remote-exec" {
