@@ -1,17 +1,18 @@
 ############################
 ########## MASTER ##########
 ############################
-
+# creat LB classic
+# https://medium.com/@hagaibarel/kubernetes-and-elbs-the-hard-way-c59a15779caf
 module "masters" {
   source = "./modules/masters"
 
-  aws = "${var.aws}"
-  key = "${var.key}"
-  public_key = "${data.template_file.public_key.rendered}"
-  kubernetes = "${var.kubernetes}"
+  # aws = "${var.aws}"
+  # key = "${var.key}"
+  # public_key = "${data.template_file.public_key.rendered}"
+  # kubernetes = "${var.kubernetes}"
 
   # move eip to post processing
-  eip = "${var.eip}"
+  # eip = "${var.eip}"
 }
 
 locals {
@@ -39,7 +40,7 @@ resource "null_resource" "master" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${data.template_file.private_key.rendered}"
+    # private_key = "${data.template_file.private_key.rendered}"
     host        = "${local.public_ip}"
   }
 
@@ -48,30 +49,31 @@ resource "null_resource" "master" {
   }
 }
 
-module "etcd" {
-  source ="./modules/etcd"
+# not needed in 1.14
+# module "etcd" {
+#   source ="./modules/etcd"
 
-  count      = "${local.count}"
-  id         = "${local.id}"
-  public_ip  = "${local.public_ip}"
-  private_ip = "${local.private_ip}"
-  key = "${var.key}"
-  public_key = "${data.template_file.public_key.rendered}"
-  private_key = "${data.template_file.private_key.rendered}"
-}
+#   count      = "${local.count}"
+#   id         = "${local.id}"
+#   public_ip  = "${local.public_ip}"
+#   private_ip = "${local.private_ip}"
+#   key = "${var.key}"
+#   public_key = "${data.template_file.public_key.rendered}"
+#   private_key = "${data.template_file.private_key.rendered}"
+# }
 
-module "kubernetes" {
-  source ="./modules/kubernetes"
+# module "kubernetes" {
+#   source ="./modules/kubernetes"
 
-  count      = "${local.count}"
-  id         = "${local.id}"
-  public_ip  = "${local.public_ip}"
-  private_ip = "${local.private_ip}"
-  key = "${var.key}"
-  public_key = "${data.template_file.public_key.rendered}"
-  private_key = "${data.template_file.private_key.rendered}"
-  kubernetes = "${var.kubernetes}"
-}
+#   count      = "${local.count}"
+#   id         = "${local.id}"
+#   public_ip  = "${local.public_ip}"
+#   private_ip = "${local.private_ip}"
+#   key = "${var.key}"
+#   public_key = "${data.template_file.public_key.rendered}"
+#   private_key = "${data.template_file.private_key.rendered}"
+#   kubernetes = "${var.kubernetes}"
+# }
   
 /*
 variable "long_key" {
@@ -82,4 +84,17 @@ Running over several lines.
 EOF
 }
 */
+# https://stackoverflow.com/questions/44509997/capture-terraform-provisioner-output
+# resource "null_resource" "contents" {
+#   triggers = {
+#     stdout     = "${data.external.read.result["stdout"]}"
+#     stderr     = "${data.external.read.result["stderr"]}"
+#     exitstatus = "${data.external.read.result["exitstatus"]}"
+#   }
 
+#   lifecycle {
+#     ignore_changes = [
+#       "triggers",
+#     ]
+#   }
+# }
