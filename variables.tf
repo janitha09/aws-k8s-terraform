@@ -5,7 +5,7 @@ variable "aws" {
     # access_key = ""
     # secret_key = ""
     # https://docs.aws.amazon.com/general/latest/gr/rande.html
-    region     = "us-east-2a"
+    region     = "us-east-2"
   }
 }
 
@@ -16,7 +16,15 @@ variable "key" {
     name        = "janitha.jayaweera"
   }
 }
+variable "security_groups" {
+  type    = "list"
+  default = ["janitha"]
+}
 
+variable "aws_ec2_private_key" {
+  type = "string"
+  default = "janitha.jayaweera"
+}
 # variable "eip" {
 #   default = "0.0.0.0"
 # }

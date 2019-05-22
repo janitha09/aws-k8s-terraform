@@ -15,10 +15,10 @@ resource "null_resource" "kubernetes" {
     host        = "${element(var.public_ip, count.index)}"
   }
 
-  provisioner "file" {
-    source      = "${path.module}/templates/kubernetes_install.sh"
-    destination = "/home/ubuntu/kubernetes_install.sh"
-  }
+  # provisioner "file" {
+  #   source      = "${path.module}/templates/kubernetes.sh"
+  #   destination = "/home/ubuntu/kubernetes.sh"
+  # }
 
   # provisioner "file" {
   #   content     = "${data.template_file.10-kubeadm-conf.rendered}"

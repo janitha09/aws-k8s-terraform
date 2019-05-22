@@ -19,7 +19,8 @@ resource "aws_instance" "cluster" {
   count           = "${var.aws_instance["count"]}"
   instance_type   = "${var.aws_instance["instance_type"]}"
   key_name        = "${var.aws_ec2_private_key}"
-  security_groups = "${var.security_groups}"
+
+  vpc_security_group_ids = "${var.security_groups}"
   root_block_device = {
       volume_size = 30
   }

@@ -6,7 +6,9 @@
 module "masters" {
   source = "./modules/masters"
 
-  # aws = "${var.aws}"
+  aws = "${var.aws}"
+  security_groups = "${var.security_groups}"
+  aws_ec2_private_key = "${var.aws_ec2_private_key}"
   # key = "${var.key}"
   # public_key = "${data.template_file.public_key.rendered}"
   # kubernetes = "${var.kubernetes}"
@@ -18,13 +20,24 @@ module "masters" {
 module "nodes" {
   source = "./modules/nodes"
 
-  # aws = "${var.aws}"
+  aws = "${var.aws}"
+  security_groups = "${var.security_groups}"
+  aws_ec2_private_key = "${var.aws_ec2_private_key}"
   # key = "${var.key}"
   # public_key = "${data.template_file.public_key.rendered}"
   # kubernetes = "${var.kubernetes}"
 
   # move eip to post processing
   # eip = "${var.eip}"
+}
+
+module "classic_load_balancer" {
+  source = "./modules/classic_load_balancer"
+
+  aws = "${var.aws}"
+  id = "${module.masters.id}"
+  # security_groups = "${var.security_groups}"
+
 }
 
 locals {
@@ -131,6 +144,12 @@ module "kubernetes_master" {
   # private_key = "${data.template_file.private_key.rendered}"
   # kubernetes = "${var.kubernetes}"
 }
+
+# module "kubernetes_first_master" {
+#   source = "./modules/first_master"
+#   public_ip  = "${local.node_public_ip[0]}"
+
+# }
 /*
 variable "long_key" {
   type = "string"
