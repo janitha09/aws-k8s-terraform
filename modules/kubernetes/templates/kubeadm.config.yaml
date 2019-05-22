@@ -1,22 +1,22 @@
-apiVersion: kubeadm.k8s.io/v1alpha1
-kind: MasterConfiguration
-api:
-  advertiseAddress: ${PRIVATEIP}
-kubernetesVersion: v1.9.7
-etcd:
-  endpoints:
-  - http://${PRIVATEIP1}:2379
-  - http://${PRIVATEIP2}:2379
-  - http://${PRIVATEIP3}:2379
-networking:
-  serviceSubnet: ${SERVICESUBNET}
-  podSubnet: ${PODSUBNET}
-apiServerCertSANs:
-- 127.0.0.1
-- ${PRIVATEIP1}
-- ${PRIVATEIP2}
-- ${PRIVATEIP3}
-- ${DNSADDRESS}
-piServerExtraArgs:
-  apiserver-count: ${MASTERSCOUNT}
+# apiVersion: kubeadm.k8s.io/v1alpha1
+# kind: MasterConfiguration
+# api:
+#   advertiseAddress: ${PRIVATEIP}
+# kubernetesVersion: v1.9.7
+# etcd:
+#   endpoints:
+#   - http://${PRIVATEIP1}:2379
+#   - http://${PRIVATEIP2}:2379
+#   - http://${PRIVATEIP3}:2379
+# networking:
+#   serviceSubnet: ${SERVICESUBNET}
+#   podSubnet: ${PODSUBNET}
+# apiServerCertSANs:
+# - 127.0.0.1
+# - ${PRIVATEIP1}
+# - ${PRIVATEIP2}
+# - ${PRIVATEIP3}
+# - ${DNSADDRESS}
+# piServerExtraArgs:
+#   apiserver-count: ${MASTERSCOUNT}
 

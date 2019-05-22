@@ -9,3 +9,7 @@ modules/masters/security_group.tf
 
 #
 *.jar
+
+*.pem
+
+test

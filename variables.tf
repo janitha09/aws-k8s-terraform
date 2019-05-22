@@ -9,14 +9,13 @@ variable "aws" {
   }
 }
 
-# variable "key" {
-#   type = "map"
-#   default = {
-#     name        = "terraform"
-#     private_key = "certs/id_rsa"
-#     public_key  = "certs/id_rsa.pub"
-#   }
-# }
+
+variable "key" {
+  type = "map"
+  default = {
+    name        = "janitha.jayaweera"
+  }
+}
 
 # variable "eip" {
 #   default = "0.0.0.0"

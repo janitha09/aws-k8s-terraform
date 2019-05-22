@@ -13,10 +13,10 @@ variable "aws" {
 variable "aws_instance" {
   type    = "map"
   default = {
-    tag_name      = "janitha-k8s-master"
+    tag_name      = "janitha-k8s-node"
     ami           = "ami-0c55b159cbfafe1f0"
     count         = 1
-    instance_type = "t2.large"
+    instance_type = "t2.xlarge"
   }
 }
 

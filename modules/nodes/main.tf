@@ -24,9 +24,9 @@ resource "aws_instance" "cluster" {
       volume_size = 30
   }
   tags {
-    Name    = "janitha-k8s-HA-master-${count.index}"
-    Team    = "janitha-master"
-    Purpose = "janitha-master"
+    Name    = "janitha-k8s-HA-node-${count.index}"
+    Team    = "janitha-node"
+    Purpose = "janitha-node"
   }
 }
 
