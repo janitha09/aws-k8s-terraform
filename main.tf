@@ -6,9 +6,9 @@
 module "masters" {
   source = "./modules/masters"
 
-  aws = "${var.aws}"
-  security_groups = "${var.security_groups}"
-  aws_ec2_private_key = "${var.aws_ec2_private_key}"
+  aws                 = var.aws
+  security_groups     = var.security_groups
+  aws_ec2_private_key = var.aws_ec2_private_key
   # key = "${var.key}"
   # public_key = "${data.template_file.public_key.rendered}"
   # kubernetes = "${var.kubernetes}"
@@ -20,9 +20,9 @@ module "masters" {
 module "nodes" {
   source = "./modules/nodes"
 
-  aws = "${var.aws}"
-  security_groups = "${var.security_groups}"
-  aws_ec2_private_key = "${var.aws_ec2_private_key}"
+  aws                 = var.aws
+  security_groups     = var.security_groups
+  aws_ec2_private_key = var.aws_ec2_private_key
   # key = "${var.key}"
   # public_key = "${data.template_file.public_key.rendered}"
   # kubernetes = "${var.kubernetes}"
@@ -34,56 +34,56 @@ module "nodes" {
 module "classic_load_balancer" {
   source = "./modules/classic_load_balancer"
 
-  aws = "${var.aws}"
-  id = "${module.masters.id}"
+  aws = var.aws
+  id  = module.masters.id
   # security_groups = "${var.security_groups}"
-
 }
 
 locals {
-  master_count = "${module.masters.count}"
-  master_id = "${module.masters.id}"
-  master_public_ip = "${module.masters.public_ip}"
-  master_private_ip = "${module.masters.private_ip}"
-  master_tags_name = "${module.masters.tags_name}"
+  master_count      = module.masters.count
+  master_id         = module.masters.id
+  master_public_ip  = module.masters.public_ip
+  master_private_ip = module.masters.private_ip
+  master_tags_name  = module.masters.tags_name
 }
 
 locals {
-  node_count = "${module.nodes.count}"
-  node_id = "${module.nodes.id}"
-  node_public_ip = "${module.nodes.public_ip}"
-  node_private_ip = "${module.nodes.private_ip}"
-  node_tags_name = "${module.nodes.tags_name}"
+  node_count      = module.nodes.count
+  node_id         = module.nodes.id
+  node_public_ip  = module.nodes.public_ip
+  node_private_ip = module.nodes.private_ip
+  node_tags_name  = module.nodes.tags_name
 }
 
-output "master" {
-  value = {
-    count = "${local.master_count}"
-    id = "${local.master_id}"
-    public_ip = "${local.master_public_ip}"
-    private_ip = "${local.master_private_ip}"
-    tags_name = "${local.master_tags_name}"
-  }
-}
-output "node" {
-  value = {
-    count = "${local.node_count}"
-    id = "${local.node_id}"
-    public_ip = "${local.node_public_ip}"
-    private_ip = "${local.node_private_ip}"
-    tags_name = "${local.node_tags_name}"
-  }
-}
+# output "master" {
+#   value = {
+#     count = "${local.master_count}"
+#     id = "${local.master_id}"
+#     public_ip = "${local.master_public_ip}"
+#     private_ip = "${local.master_private_ip}"
+#     tags_name = "${local.master_tags_name}"
+#   }
+# }
+# output "node" {
+#   value = {
+#     count = "${local.node_count}"
+#     id = "${local.node_id}"
+#     public_ip = "${local.node_public_ip}"
+#     private_ip = "${local.node_private_ip}"
+#     tags_name = "${local.node_tags_name}"
+#   }
+# }
 
 resource "null_resource" "master" {
-  depends_on = ["module.masters"]
+  depends_on = [module.masters]
 
-  count = "${local.master_count}"
+  count = local.master_count
   connection {
-    type        = "ssh"
-    user        = "ubuntu"
+    type = "ssh"
+    user = "ubuntu"
+
     # private_key = "${data.template_file.private_key.rendered}"
-    host        = "${local.master_public_ip}"
+    host = local.master_public_ip
   }
 
   provisioner "local-exec" {
@@ -92,20 +92,22 @@ resource "null_resource" "master" {
 }
 
 resource "null_resource" "node" {
-  depends_on = ["module.nodes"]
+  depends_on = [module.nodes]
 
-  count = "${local.node_count}"
+  count = local.node_count
   connection {
-    type        = "ssh"
-    user        = "ubuntu"
+    type = "ssh"
+    user = "ubuntu"
+
     # private_key = "${data.template_file.private_key.rendered}"
-    host        = "${local.node_public_ip}"
+    host = local.node_public_ip
   }
 
   provisioner "local-exec" {
     command = "echo '${element(local.node_public_ip, count.index)}' >> test"
   }
 }
+
 # not needed in 1.14
 # module "etcd" {
 #   source ="./modules/etcd"
@@ -120,26 +122,26 @@ resource "null_resource" "node" {
 # }
 
 module "kubernetes_master" {
-  source ="./modules/kubernetes"
+  source = "./modules/kubernetes"
 
-  count      = "${local.master_count}"
-  id         = "${local.master_id}"
-  public_ip  = "${local.master_public_ip}"
-  private_ip = "${local.master_private_ip}"
-  key        = "${var.key}"
+  instances      = local.master_count
+  id         = local.master_id
+  public_ip  = local.master_public_ip
+  private_ip = local.master_private_ip
+  key        = var.key
   # public_key = "${data.template_file.public_key.rendered}"
   # private_key = "${data.template_file.private_key.rendered}"
   # kubernetes = "${var.kubernetes}"
 }
-  
-  module "kubernetes_node" {
-  source ="./modules/kubernetes"
 
-  count      = "${local.node_count}"
-  id         = "${local.node_id}"
-  public_ip  = "${local.node_public_ip}"
-  private_ip = "${local.node_private_ip}"
-  key        = "${var.key}"
+module "kubernetes_node" {
+  source = "./modules/kubernetes"
+
+  instances      = local.node_count
+  id         = local.node_id
+  public_ip  = local.node_public_ip
+  private_ip = local.node_private_ip
+  key        = var.key
   # public_key = "${data.template_file.public_key.rendered}"
   # private_key = "${data.template_file.private_key.rendered}"
   # kubernetes = "${var.kubernetes}"
@@ -148,7 +150,6 @@ module "kubernetes_master" {
 # module "kubernetes_first_master" {
 #   source = "./modules/first_master"
 #   public_ip  = "${local.node_public_ip[0]}"
-
 # }
 /*
 variable "long_key" {
@@ -166,7 +167,6 @@ EOF
 #     stderr     = "${data.external.read.result["stderr"]}"
 #     exitstatus = "${data.external.read.result["exitstatus"]}"
 #   }
-
 #   lifecycle {
 #     ignore_changes = [
 #       "triggers",

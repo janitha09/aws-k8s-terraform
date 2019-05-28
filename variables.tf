@@ -1,35 +1,34 @@
 variable "aws" {
-  type    = "map"
+  type = map(string)
   default = {
     # https://console.aws.amazon.com/iam/home?#/security_credential
     # access_key = ""
     # secret_key = ""
     # https://docs.aws.amazon.com/general/latest/gr/rande.html
-    region     = "us-east-2"
+    region = "us-east-2"
   }
 }
-
 
 variable "key" {
-  type = "map"
+  type = map(string)
   default = {
-    name        = "janitha.jayaweera"
+    name = "janitha.jayaweera"
   }
 }
+
 variable "security_groups" {
-  type    = "list"
+  type    = list(string)
   default = ["janitha"]
 }
 
 variable "aws_ec2_private_key" {
-  type = "string"
+  type    = string
   default = "janitha.jayaweera"
 }
+
 # variable "eip" {
 #   default = "0.0.0.0"
 # }
-
-
 # variable "kubernetes" {
 #   type = "map"
 #   default = {
@@ -39,4 +38,3 @@ variable "aws_ec2_private_key" {
 #     serviceDNS    = "10.96.0.10"
 #   }
 # }
-

@@ -2,18 +2,18 @@
 ############ K8S ###########
 ############################
 
-resource "null_resource" "kubernetes" {
-  triggers {
-    cluster_instance_ids = "${join(",", var.id)}"
-  }
+# resource "null_resource" "kubernetes" {
+#   triggers {
+#     cluster_instance_ids = "${join(",", var.id)}"
+#   }
 
-  count = "${var.count}"
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    private_key = "${file("${path.module}/janitha.jayaweera.pem")}"
-    host        = "${element(var.public_ip, count.index)}"
-  }
+#   count = "${var.count}"
+#   connection {
+#     type        = "ssh"
+#     user        = "ubuntu"
+#     private_key = "${file("${path.module}/janitha.jayaweera.pem")}"
+#     host        = "${element(var.public_ip, count.index)}"
+#   }
 
   # provisioner "file" {
   #   source      = "${path.module}/templates/kubernetes.sh"
@@ -29,7 +29,7 @@ resource "null_resource" "kubernetes" {
   #   content     = "${element(data.template_file.kubeadm-config-yaml.*.rendered, count.index)}"
   #   destination = "/home/ubuntu/kubeadm.config.yaml"
   # }
-}
+# }
 
 
 ############################
@@ -37,9 +37,9 @@ resource "null_resource" "kubernetes" {
 ############################
 
 resource "null_resource" "kubernetes_execute" {
-  depends_on = ["null_resource.kubernetes"]
+  # depends_on = ["null_resource.kubernetes"]
 
-  count = "${var.count}"
+  count = "${var.instances}"
   connection {
     type        = "ssh"
     user        = "ubuntu"
@@ -58,11 +58,11 @@ resource "null_resource" "kubernetes_execute" {
       "sudo apt-get install -y docker-ce docker-ce-cli containerd.io",
       "sudo bash -c 'cat > /etc/docker/daemon.json <<EOF",
               "{",
-                "\"exec-opts\": [\"native.cgroupdriver=systemd\"]",
-                "\"log-driver\": \"json-file\"",
+                "\"exec-opts\": [\"native.cgroupdriver=systemd\"],",
+                "\"log-driver\": \"json-file\",",
                 "\"log-opts\": {",
                   "\"max-size\": \"100m\"",
-                "}",
+                "},",
                 "\"storage-driver\": \"overlay2\"",
               "}",
       "EOF'",
@@ -70,6 +70,7 @@ resource "null_resource" "kubernetes_execute" {
       "sudo systemctl daemon-reload",
       "sudo systemctl restart docker",
       "sudo docker info",
+      "sudo usermod -aG docker $USER", #sudo groupadd docker
       "sudo apt-get update && apt-get install -y apt-transport-https curl",
       "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -",
       "sudo bash -c 'cat > /etc/apt/sources.list.d/kubernetes.list <<EOF",
@@ -83,7 +84,9 @@ resource "null_resource" "kubernetes_execute" {
   }
 }
 
-
+# output "master_installed" {
+#   value = true
+# }
 # ### MASTER ###
 
 # resource "null_resource" "master" {

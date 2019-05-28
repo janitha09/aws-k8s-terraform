@@ -1,6 +1,6 @@
 variable "id" {
   type = "list"
-  # default = ["i-05b367984395769d1"]
+  default = ["i-05b367984395769d1"]
 }
 
 variable "security_groups" {

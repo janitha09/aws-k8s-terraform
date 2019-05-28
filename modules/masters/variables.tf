@@ -1,26 +1,25 @@
 variable "aws" {
-  type    = "map"
+  type = map(string)
 }
 
-
 variable "aws_instance" {
-  type    = "map"
+  type = map(string)
   default = {
     tag_name      = "janitha-k8s-master"
     ami           = "ami-0c55b159cbfafe1f0"
-    count         = 3
+    count         = 1
     instance_type = "t2.large"
   }
 }
 
-
 variable "security_groups" {
-  type    = "list"
+  type = list(string)
 }
 
-variable "aws_ec2_private_key"{
-  type = "string"
+variable "aws_ec2_private_key" {
+  type = string
 }
+
 # variable "key" {
 #   # type = "map"
 #   # default = {
@@ -29,12 +28,8 @@ variable "aws_ec2_private_key"{
 #   #   # public_key  = "certs/id_rsa.pub"
 #   # }
 # }
-
 # variable "public_key" {}
-
 # variable "eip" {}
-
-
 # variable "kubernetes" {
 #   type = "map"
 # }

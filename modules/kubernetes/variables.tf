@@ -1,4 +1,4 @@
-variable "count" {}
+variable "instances" {}
 
 variable "id" {
   type = "list"

@@ -16,14 +16,15 @@ provider "aws" {
 resource "aws_instance" "cluster" {
   # depends_on = ["aws_key_pair.cluster"]
   ami             = "${var.aws_instance["ami"]}"
-  count           = "${var.aws_instance["count"]}"
-  instance_type   = "${var.aws_instance["instance_type"]}"
-  key_name        = "${var.aws_ec2_private_key}"
-  security_groups = "${var.security_groups}"
-  root_block_device = {
+  count           = var.aws_instance["count"]
+  instance_type   = var.aws_instance["instance_type"]
+  key_name        = var.aws_ec2_private_key
+  security_groups = var.security_groups
+
+  root_block_device {
       volume_size = 30
   }
-  tags {
+  tags = {
     Name    = "janitha-k8s-HA-node-${count.index}"
     Team    = "janitha-node"
     Purpose = "janitha-node"
