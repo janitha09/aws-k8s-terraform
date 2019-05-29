@@ -31,13 +31,13 @@ module "nodes" {
   # eip = "${var.eip}"
 }
 
-module "classic_load_balancer" {
-  source = "./modules/classic_load_balancer"
+# module "classic_load_balancer" {
+#   source = "./modules/classic_load_balancer"
 
-  aws = var.aws
-  id  = module.masters.id
-  # security_groups = "${var.security_groups}"
-}
+#   aws = var.aws
+#   id  = module.masters.id
+#   # security_groups = "${var.security_groups}"
+# }
 
 locals {
   master_count      = module.masters.count

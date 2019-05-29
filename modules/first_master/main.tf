@@ -52,11 +52,11 @@ resource "null_resource" "run-kubeadm" {
       "sudo kubeadm init phase control-plane all --config ~/kubeadm-config.yaml --v 10",
       "sudo kubeadm init phase etcd local --config ~/kubeadm-config.yaml --v 10",
       "sudo kubeadm init phase kubelet-start --config ~/kubeadm-config.yaml --v 10", # update docs to say run this later? https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init-phase/#cmd-phase-upload-certs
-      # "sudo kubeadm init phase upload-certs --config ~/kubeadm-config.yaml --experimental-upload-certs --v 10" # this does not work
-      # "sudo kubeadm init phase mark-control-plane --config ~/kubeadm-config.yaml --v 10" # cannot get to the node kubectl is trying to connect to localhost
-      # "sudo kubeadm init phase bootstrap-token --config ~/kubeadm-config.yaml --v 10" this fails because of secrets
-      # "sudo kubeadm init phase upload-config all --config ~/kubeadm-config.yaml --v 10"
-      # "sudo kubeadm init phase addon all --config ~/kubeadm-config.yaml --v 10" # --pod-network-cidr 192.168.0.0/16
+      "sudo kubeadm init phase upload-certs --config ~/kubeadm-config.yaml --experimental-upload-certs --v 10", # this does not work
+      "sudo kubeadm init phase mark-control-plane --config ~/kubeadm-config.yaml --v 10", # cannot get to the node kubectl is trying to connect to localhost
+      "sudo kubeadm init phase bootstrap-token --config ~/kubeadm-config.yaml --v 10", #this fails because of secrets
+      "sudo kubeadm init phase upload-config all --config ~/kubeadm-config.yaml --v 10",
+      "sudo kubeadm init phase addon all --config ~/kubeadm-config.yaml --v 10" # --pod-network-cidr 192.168.0.0/16
 
       # The traffic is going through but a curl doesn't work
     #   "sudo tar cvfz /tmp/cred.tar.gz /etc/kubernetes/pki/sa.* /etc/kubernetes/pki/ca.*"

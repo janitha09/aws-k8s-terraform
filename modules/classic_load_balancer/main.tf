@@ -23,6 +23,30 @@ resource "aws_elb" "load_balancer" {
   instances                   = "${var.id}"
 }
 
+resource "aws_lb" "pass_through" {
+  name = "janitha_nlb"
+  load_balancer_type = "network"
+  
+  access_logs {
+    bucket  = "s3://janitha-nlb"
+    prefix  = "pass-through"
+    enabled = true
+  }
+}
+
+resource "aws_lb_listener" "pass_through" {
+  load_balancer_arn = "${aws_lb.pass_through.arn}"
+  port              = "6443"
+  protocol          = "TLS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "arn:aws:acm:us-east-2:369551733582:certificate/07434d6b-249d-41cc-953f-3b418058b8b1"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = "${aws_lb_target_group.pass_through.arn}"
+  }
+}
+
 
 output "dns_name" {
   value = "${aws_elb.load_balancer.dns_name}"
