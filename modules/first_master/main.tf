@@ -1,6 +1,6 @@
 
 resource "null_resource" "kubeadm-config" {
-  triggers {
+  triggers = {
     cluster_instance_ids = "${join(",", var.public_ip)}"
   }
 
