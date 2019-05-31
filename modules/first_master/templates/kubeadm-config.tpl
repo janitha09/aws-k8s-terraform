@@ -1,7 +1,7 @@
 apiVersion: kubeadm.k8s.io/v1beta1
 kind: ClusterConfiguration
 kubernetesVersion: 1.14.2
-controlPlaneEndpoint: "ip-172-31-47-9:6443" # shorter names works
+controlPlaneEndpoint: "${HAPROXY_IP}:6443" # shorter names works
 # apiServer:
 #  certSANs:
 #  - "janitha-2ec89d38da1f97a7.elb.us-east-2.amazonaws.com"

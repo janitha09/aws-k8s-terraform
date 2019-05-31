@@ -43,7 +43,7 @@ resource "null_resource" "kubernetes_execute" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file("${path.module}/janitha.jayaweera.pem")}" #${file("${path.module}/janitha.jayaweera.pem")}
+    private_key = "${file("${path.root}/janitha.jayaweera.pem")}" #${file("${path.module}/janitha.jayaweera.pem")}
     host        = "${element(var.public_ip, count.index)}"
   }
 

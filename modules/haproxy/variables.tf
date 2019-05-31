@@ -6,7 +6,7 @@ variable "aws" {
     # access_key = ""
     # secret_key = ""
     # https://docs.aws.amazon.com/general/latest/gr/rande.html
-    region = "us-east-2"
+    region = "us-west-2"
   }
 }
 
@@ -14,7 +14,7 @@ variable "aws_instance" {
   type = map(string)
   default = {
     tag_name      = "janitha-k8s-haproxy"
-    ami           = "ami-0c55b159cbfafe1f0"
+    ami           = "ami-005bdb005fb00e791"
     count         = 1
     instance_type = "t2.micro"
   }
@@ -27,8 +27,13 @@ variable "security_groups" {
 
 variable "aws_ec2_private_key" {
   type    = string
-  default = "janitha.jayaweera"
+  default = "janitha.jayaweera.525546773638"
 }
+variable "k8s_master_ips" {
+  type = list
+  default = ["172.31.25.50"]
+}
+
 
 # variable "key" {
 #   # type = "map"

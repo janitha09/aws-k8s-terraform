@@ -8,14 +8,18 @@ resource "null_resource" "kubeadm-config" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file("${path.module}/janitha.jayaweera.pem")}"
+    private_key = "${file("${path.root}/janitha.jayaweera.pem")}"
     host        = "${element(var.public_ip, count.index)}"
   }
 
   provisioner "file" {
-    source      = "${path.module}/templates/kubeadm-config.yaml"
-    destination = "/home/ubuntu/kubeadm-config.yaml"
+    content     = "${element(data.template_file.kubeadm-config.*.rendered, 1)}"
+    destination = "/home/ubuntu/haproxy/kubeadm-config.yaml"
   }
+  # provisioner "file" {
+  #   source      = "${path.module}/templates/kubeadm-config.tpl"
+  #   destination = "/home/ubuntu/kubeadm-config.yaml"
+  # }
 
 #   provisioner "file" {
 #     content     = "${data.template_file.10-kubeadm-conf.rendered}"
@@ -35,7 +39,7 @@ resource "null_resource" "run-kubeadm" {
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file("${path.module}/janitha.jayaweera.pem")}"
+    private_key = "${file("${path.root}/janitha.jayaweera.pem")}"
     host        = "${element(var.public_ip, 0)}"
   }
 
@@ -103,6 +107,49 @@ resource "null_resource" "run-kubeadm" {
 #       "sudo tar xvfz cred.tar.gz",
 #       "popd",
 #       "sudo kubeadm init --config kubeadm.config.yaml"
+#     ]
+#   }
+# }
+
+data "template_file" "kubeadm-config" {
+  template = "${file("${path.module}/templates/kubeadm-config.tpl")}"
+
+  vars = {
+    HAPROXY_IP="${element(var.haproxy_ip, 1)}"
+    # PRIVATEIP2="${element(var.private_ip, 1)}"
+    # PRIVATEIP3="${element(var.private_ip, 2)}"
+  }
+}
+
+# resource "null_resource" "create_haproxy_cfg" {
+#   depends_on = ["null_resource.haproxy_execute"]
+
+#   connection {
+#     type        = "ssh"
+#     user        = "ubuntu"
+#     private_key = "${file("${path.root}/janitha.jayaweera.pem")}"
+#     host        = "${element(var.public_ip, 0)}"
+#   }
+
+#   provisioner "remote-exec" {
+#     inline = [
+#       "mkdir -p /home/ubuntu/haproxy"
+#     ]
+#   }
+
+#   provisioner "file" {
+#     content     = "${element(data.template_file.haproxy-cfg.*.rendered, 1)}"
+#     destination = "/home/ubuntu/haproxy/haproxy.cfg"
+#   }
+
+#   provisioner "remote-exec" {
+#     inline = [
+#       "bash -c 'cat > /home/ubuntu/haproxy/Dockerfile << EOF",
+#       "FROM haproxy:latest",
+#       "COPY ./haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg",
+#       "EOF'",
+#       "docker build -t haproxy_master_lb:latest /home/ubuntu/haproxy",
+#       "docker run -d -p 6443:6443 haproxy_master_lb:latest"
 #     ]
 #   }
 # }

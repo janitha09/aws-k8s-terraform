@@ -5,14 +5,14 @@ variable "aws" {
     # access_key = ""
     # secret_key = ""
     # https://docs.aws.amazon.com/general/latest/gr/rande.html
-    region = "us-east-2"
+    region = "us-west-2"
   }
 }
 
 variable "key" {
   type = map(string)
   default = {
-    name = "janitha.jayaweera"
+    name = "janitha.jayaweera.525546773638"
   }
 }
 
@@ -23,7 +23,7 @@ variable "security_groups" {
 
 variable "aws_ec2_private_key" {
   type    = string
-  default = "janitha.jayaweera"
+  default = "janitha.jayaweera.525546773638"
 }
 
 # variable "eip" {

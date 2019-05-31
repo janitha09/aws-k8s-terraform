@@ -1,7 +1,3 @@
-############################
-########### AWS ############
-############################
-
 provider "aws" {
   # access_key = "${var.aws["access_key"]}"
   # secret_key = "${var.aws["secret_key"]}"
@@ -19,7 +15,7 @@ resource "aws_instance" "haproxy" {
   count           = var.aws_instance["count"]
   instance_type   = var.aws_instance["instance_type"]
   key_name        = var.aws_ec2_private_key
-  security_groups = var.security_groups
+  vpc_security_group_ids = ["sg-04712c95cfacd658a","sg-065108a3caad538a3","sg-5510ba1e"]
   root_block_device {
     volume_size = "30"
   }
@@ -65,39 +61,52 @@ resource "null_resource" "haproxy_execute" {
       "sudo systemctl restart docker",
       "sudo docker info",
       "sudo usermod -aG docker $USER", #sudo groupadd docker
-      "sudo curl -L \"https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)\" -o /usr/local/bin/docker-compose",
-      "sudo chmod +x /usr/local/bin/docker-compose",
-      "git clone https://github.com/janitha09/docker-haproxy-nginx.git",
-      "cd /docker-haproxy-nginx",
-      "git checkout sslpassthrough"
-      "docker-compose up -d"
-      # "sudo apt-get update && apt-get install -y apt-transport-https curl",
-      # "curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -",
-      # "sudo bash -c 'cat > /etc/apt/sources.list.d/kubernetes.list <<EOF",
-      # "deb https://apt.kubernetes.io/ kubernetes-xenial main",
-      # "EOF'",
-      # "sudo cat /etc/apt/sources.list.d/kubernetes.list",
-      # "sudo apt-get update",
-      # "sudo apt-get install -y kubelet kubeadm kubectl",
-      # "sudo apt-mark hold kubelet kubeadm kubectl"
     ]
   }
 }
 
+data "template_file" "haproxy-cfg" {
+  template = "${file("${path.module}/templates/haproxy.tpl")}"
 
-############################
-######### POST AWS #########
-############################
+  vars = {
+    MASTER_IP1="${element(var.k8s_master_ips,1)}"
+    # PRIVATEIP2="${element(var.private_ip, 1)}"
+    # PRIVATEIP3="${element(var.private_ip, 2)}"
+  }
+}
 
-#resource "aws_eip_association" "proxy_eip" {
-#  depends_on = ["null_resource.etcd_execute", "null_resource.master-post"]
-#  instance_id   = "${aws_instance.cluster.0.id}"
-#  allocation_id = "${data.aws_eip.proxy_ip.id}"
-#}
+resource "null_resource" "create_haproxy_cfg" {
+  depends_on = ["null_resource.haproxy_execute"]
 
-############################
-########## OUTPUT ##########
-############################
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    private_key = "${file("${path.root}/janitha.jayaweera.pem")}"
+    host        = "${element(aws_instance.haproxy.*.public_ip, 0)}"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p /home/ubuntu/haproxy"
+    ]
+  }
+
+  provisioner "file" {
+    content     = "${element(data.template_file.haproxy-cfg.*.rendered, 1)}"
+    destination = "/home/ubuntu/haproxy/haproxy.cfg"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "bash -c 'cat > /home/ubuntu/haproxy/Dockerfile << EOF",
+      "FROM haproxy:latest",
+      "COPY ./haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg",
+      "EOF'",
+      "docker build -t haproxy_master_lb:latest /home/ubuntu/haproxy",
+      "docker run -d -p 6443:6443 haproxy_master_lb:latest"
+    ]
+  }
+}
 
 output "count" {
   value = var.aws_instance["count"]
