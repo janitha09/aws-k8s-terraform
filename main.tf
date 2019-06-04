@@ -11,7 +11,7 @@ module "haproxy" {
   aws                 = var.aws
   security_groups     = var.security_groups
   aws_ec2_private_key = var.aws_ec2_private_key
-  k8s_master_ips = module.masters.public_ip
+  k8s_master_private_ips = module.masters.private_ip
 }
 
 
@@ -44,8 +44,8 @@ module "kubernetes_node" {
 
 module "kubernetes_first_master" {
   source = "./modules/first_master"
-  public_ip  = "${module.masters.public_ip}"
-  haproxy_ip = "${module.haproxy.public_ip}"
+  master_public_ip  = "${module.masters.public_ip}"
+  haproxy_private_ip = "${module.haproxy.private_ip}"
 }
 /*
 variable "long_key" {

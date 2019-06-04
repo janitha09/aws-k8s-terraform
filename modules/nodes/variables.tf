@@ -7,8 +7,8 @@ variable "aws_instance" {
   type    = "map"
   default = {
     tag_name      = "janitha-k8s-node"
-    ami           = "ami-0c55b159cbfafe1f0"
-    count         = 0
+    ami           = "ami-005bdb005fb00e791"
+    count         = 3
     instance_type = "t2.xlarge"
   }
 }

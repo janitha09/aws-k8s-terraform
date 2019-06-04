@@ -17,4 +17,6 @@ frontend frontend
   default_backend backend
 
 backend backend
-  server master0 ${MASTER_IP1}:6443 check
+  server master0 ${MASTER_PRIVATE_IP0}:6443 check
+  server master0 ${MASTER_PRIVATE_IP1}:6443 check
+  server master0 ${MASTER_PRIVATE_IP2}:6443 check

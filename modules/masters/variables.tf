@@ -7,7 +7,7 @@ variable "aws_instance" {
   default = {
     tag_name      = "janitha-k8s-master"
     ami           = "ami-005bdb005fb00e791" #"ami-0c55b159cbfafe1f0"
-    count         = 1
+    count         = 3
     instance_type = "t2.large"
   }
 }

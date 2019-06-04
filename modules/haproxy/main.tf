@@ -4,15 +4,9 @@ provider "aws" {
   region = "${var.aws["region"]}"
 }
 
-# resource "aws_key_pair" "cluster" {
-#   key_name   = "${var.key["name"]}"
-#   # public_key = "${var.public_key}"
-# }
-
 resource "aws_instance" "haproxy" {
   # depends_on = ["aws_key_pair.cluster"]
   ami             = "${var.aws_instance["ami"]}"
-  count           = var.aws_instance["count"]
   instance_type   = var.aws_instance["instance_type"]
   key_name        = var.aws_ec2_private_key
   vpc_security_group_ids = ["sg-04712c95cfacd658a","sg-065108a3caad538a3","sg-5510ba1e"]
@@ -20,7 +14,7 @@ resource "aws_instance" "haproxy" {
     volume_size = "30"
   }
   tags = {
-    Name    = "janitha-k8s-HAPROXY-${count.index}"
+    Name    = "janitha-k8s-HAPROXY-${element(var.k8s_master_private_ips,0)}"
     Team    = "janitha-HAPROXY"
     Purpose = "janitha-HAPROXY"
   }
@@ -28,13 +22,11 @@ resource "aws_instance" "haproxy" {
 
 resource "null_resource" "haproxy_execute" {
   depends_on = ["aws_instance.haproxy"]
-
-  count = var.aws_instance["count"]
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file("${path.module}/janitha.jayaweera.pem")}" #${file("${path.module}/janitha.jayaweera.pem")}
-    host        = "${element(aws_instance.haproxy.*.public_ip, count.index)}"
+    private_key = "${file("${path.root}/janitha.jayaweera.pem")}" #${file("${path.module}/janitha.jayaweera.pem")}
+    host        = "${element(aws_instance.haproxy.*.public_ip, 0)}"
   }
 
   provisioner "remote-exec" {
@@ -69,9 +61,9 @@ data "template_file" "haproxy-cfg" {
   template = "${file("${path.module}/templates/haproxy.tpl")}"
 
   vars = {
-    MASTER_IP1="${element(var.k8s_master_ips,1)}"
-    # PRIVATEIP2="${element(var.private_ip, 1)}"
-    # PRIVATEIP3="${element(var.private_ip, 2)}"
+    MASTER_PRIVATE_IP0="${element(var.k8s_master_private_ips,0)}"
+    MASTER_PRIVATE_IP1="${element(var.k8s_master_private_ips, 1)}"
+    MASTER_PRIVATE_IP2="${element(var.k8s_master_private_ips, 2)}"
   }
 }
 
@@ -103,13 +95,9 @@ resource "null_resource" "create_haproxy_cfg" {
       "COPY ./haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg",
       "EOF'",
       "docker build -t haproxy_master_lb:latest /home/ubuntu/haproxy",
-      "docker run -d -p 6443:6443 haproxy_master_lb:latest"
+      "docker run -d -p 6443:6443 --name ${element(var.k8s_master_private_ips,0)} haproxy_master_lb:latest"
     ]
   }
-}
-
-output "count" {
-  value = var.aws_instance["count"]
 }
 
 output "id" {

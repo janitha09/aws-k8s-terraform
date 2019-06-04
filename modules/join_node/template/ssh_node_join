@@ -1,0 +1,1 @@
+ssh -i "janitha.jayaweera.525546773638.pem" ubuntu@${NODE_PUBLIC_IP0} node_join

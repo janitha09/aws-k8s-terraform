@@ -19,7 +19,7 @@ resource "aws_instance" "cluster" {
   count           = var.aws_instance["count"]
   instance_type   = var.aws_instance["instance_type"]
   key_name        = var.aws_ec2_private_key
-  security_groups = var.security_groups
+  vpc_security_group_ids = ["sg-04712c95cfacd658a","sg-065108a3caad538a3","sg-5510ba1e"]
 
   root_block_device {
       volume_size = 30

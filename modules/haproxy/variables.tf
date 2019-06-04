@@ -15,7 +15,6 @@ variable "aws_instance" {
   default = {
     tag_name      = "janitha-k8s-haproxy"
     ami           = "ami-005bdb005fb00e791"
-    count         = 1
     instance_type = "t2.micro"
   }
 }
@@ -29,7 +28,7 @@ variable "aws_ec2_private_key" {
   type    = string
   default = "janitha.jayaweera.525546773638"
 }
-variable "k8s_master_ips" {
+variable "k8s_master_private_ips" {
   type = list
   default = ["172.31.25.50"]
 }
