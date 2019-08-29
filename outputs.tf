@@ -1,12 +1,12 @@
-output "master" {
-  value = {
-    master_count      = module.masters.count
-    master_id         = module.masters.id
-    master_public_ip  = module.masters.public_ip
-    master_private_ip = module.masters.private_ip
-    master_tags_name  = module.masters.tags_name
-  }
-}
+# output "master" {
+#   value = {
+#     master_count      = module.masters.count
+#     master_id         = module.masters.id
+#     master_public_ip  = module.masters.public_ip
+#     master_private_ip = module.masters.private_ip
+#     master_tags_name  = module.masters.tags_name
+#   }
+# }
 
 # output "node" {
 #   value = {

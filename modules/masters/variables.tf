@@ -1,5 +1,9 @@
 variable "aws" {
-  type = map(string)
+  type        = map(string)
+  description = "set region"
+  default = {
+    region = "us-west-2"
+  }
 }
 
 variable "aws_instance" {
@@ -12,24 +16,19 @@ variable "aws_instance" {
   }
 }
 
-variable "security_groups" {
-  type = list(string)
+variable "vpc_security_group_ids" {
+  type    = list(string)
+  default = ["sg-0887630f35d971bb3"] #,"${local.local_self_security_group}"]
 }
-
-variable "aws_ec2_private_key" {
+variable "subnet_id" {
+  type    = string
+  default = "subnet-01d7dbef939fa5823"
+}
+variable "tag-environment" {
+  type    = string
+  default = "Janitha"
+}
+variable "aws_public_key" {
   type = string
 }
 
-# variable "key" {
-#   # type = "map"
-#   # default = {
-#   #   name        = "janitha.jayaweera"
-#   #   # private_key = "certs/id_rsa"
-#   #   # public_key  = "certs/id_rsa.pub"
-#   # }
-# }
-# variable "public_key" {}
-# variable "eip" {}
-# variable "kubernetes" {
-#   type = "map"
-# }

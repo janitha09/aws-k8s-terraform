@@ -1,5 +1,5 @@
 variable "aws" {
-  type = map(string)
+  type        = map(string)
   description = "set region"
   default = {
     # https://console.aws.amazon.com/iam/home?#/security_credential
@@ -24,15 +24,27 @@ variable "security_groups" {
   default = ["janitha"]
 }
 
-variable "aws_ec2_private_key" {
-  type    = string
-  default = "janitha.jayaweera.525546773638"
-}
 variable "k8s_master_private_ips" {
   type = list
-  default = ["172.31.25.50"]
+  default = [
+    "172.31.19.250",
+    "172.31.30.55",
+    "172.31.26.209"
+  ]
 }
 
+variable "vpc_security_group_ids" {
+  type    = list(string)
+  default = ["sg-0887630f35d971bb3"]
+}
+variable "subnet_id" {
+  type    = string
+  default = "subnet-01d7dbef939fa5823"
+}
+variable "tag-environment" {
+  type    = string
+  default = "Janitha"
+}
 
 # variable "key" {
 #   # type = "map"
@@ -47,3 +59,7 @@ variable "k8s_master_private_ips" {
 # variable "kubernetes" {
 #   type = "map"
 # }
+
+variable "aws_public_key" {
+  type = string
+}

@@ -1,12 +1,12 @@
-resource "null_resource" "kubernetes_execute" {
+resource "null_resource" "install_k8s" {
   # depends_on = ["null_resource.kubernetes"]
 
   count = "${var.instances}"
   connection {
     type        = "ssh"
     user        = "ubuntu"
-    private_key = "${file("${path.root}/janitha.jayaweera.pem")}" #${file("${path.module}/janitha.jayaweera.pem")}
-    host        = "${element(var.public_ip, count.index)}"
+    private_key = "${file("${path.root}/${var.aws_public_key}.pem")}" #${file("${path.module}/${var.aws_public_key}")}
+    host        = "${element(var.private_ip, count.index)}"
   }
 
   provisioner "remote-exec" {
@@ -19,14 +19,19 @@ resource "null_resource" "kubernetes_execute" {
       "sudo apt-get update",
       "sudo apt-get install -y docker-ce docker-ce-cli containerd.io",
       "sudo bash -c 'cat > /etc/docker/daemon.json <<EOF",
-              "{",
-                "\"exec-opts\": [\"native.cgroupdriver=systemd\"],",
-                "\"log-driver\": \"json-file\",",
-                "\"log-opts\": {",
-                  "\"max-size\": \"100m\"",
-                "},",
-                "\"storage-driver\": \"overlay2\"",
-              "}",
+      "{",
+      "\"exec-opts\": [\"native.cgroupdriver=systemd\"],",
+      "\"log-driver\": \"json-file\",",
+      "\"log-opts\": {",
+      "\"max-size\": \"100m\"",
+      "},",
+      "\"storage-driver\": \"overlay2\",",
+      "\"insecure-registries\" : [",
+      "\"lwpeartifabld.tideworks.com:5000\",",
+      "\"artifactory-dev.tideworks.com:5000\",",
+      "\"192.168.118.72:5000\"",
+      "]",
+      "}",
       "EOF'",
       "cat /etc/docker/daemon.json",
       "sudo systemctl daemon-reload",
@@ -44,4 +49,8 @@ resource "null_resource" "kubernetes_execute" {
       "sudo apt-mark hold kubelet kubeadm kubectl"
     ]
   }
+}
+
+output "kubernetes_installed_on_master_atleast" {
+  value = null_resource.install_k8s.0.id
 }

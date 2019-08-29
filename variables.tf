@@ -1,29 +1,34 @@
 variable "aws" {
   type = map(string)
   default = {
-    # https://console.aws.amazon.com/iam/home?#/security_credential
-    # access_key = ""
-    # secret_key = ""
-    # https://docs.aws.amazon.com/general/latest/gr/rande.html
     region = "us-west-2"
   }
 }
 
-variable "key" {
-  type = map(string)
-  default = {
-    name = "janitha.jayaweera.525546773638"
-  }
-}
+# variable "key" {
+#   type = map(string)
+#   default = {
+#     name = "janitha.jayaweera.525546773638"
+#   }
+# }
 
 variable "security_groups" {
   type    = list(string)
   default = ["janitha"]
 }
 
-variable "aws_ec2_private_key" {
+variable "vpc_security_group_ids" {
+  type    = list(string)
+  default = ["sg-0887630f35d971bb3"]
+}
+variable "subnet_id" {
   type    = string
-  default = "janitha.jayaweera.525546773638"
+  default = "subnet-01d7dbef939fa5823"
+}
+
+variable "tag-environment" {
+  type    = string
+  default = "Janitha"
 }
 
 # variable "eip" {
@@ -38,3 +43,7 @@ variable "aws_ec2_private_key" {
 #     serviceDNS    = "10.96.0.10"
 #   }
 # }
+variable "aws_public_key" {
+  type    = string
+  default = "janitha.jayaweera.525546773638"
+}
